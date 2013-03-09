@@ -41,7 +41,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	attachedClients[messageChan] = true
 	log.Println("New client attached.")
 
-	// Remove ourselves from the list of attached clients
+	// Remove this client from the map of attached clients
 	// when `EventHandler` exits.
 	defer delete(attachedClients, messageChan)
 
