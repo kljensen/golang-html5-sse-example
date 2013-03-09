@@ -3,11 +3,21 @@ Golang HTML5 SSE Example
 
 This is an minimalistic example of how to do
 [HTML5 Server Side Events](http://en.wikipedia.org/wiki/Server-sent_events)
-with [Go (golang)](http://golang.org/).  In this example, the server
-pushes a new "event" every five seconds.  That event is just a short 
+with [Go (golang)](http://golang.org/).  From the server's perspective,
+SSE is nearly identical to long polling.  The client makes a GET request
+that establishes a TCP connection.  The server keeps this connection open
+send sends events to the client when they are available. In this example,
+the server pushes a new "event" every five seconds.  That event is just a short
 message including the current time.  Any number of clients can be
 connected: they will all receive the same events if they're connected
 concurrently.
+
+The main advantage of HTML5 SSE over long polling is that there is a nice
+API for it in modern browsers, so that you need not use iframes and such.
+SSE is easier than Websockets in the sense that it communicates exclusively
+over HTTP and therefore does not require a separate server.  Websockets,
+however, supports two-way real-time communication between the client and
+the server.
 
 ## Installing
 
