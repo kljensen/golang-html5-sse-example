@@ -107,6 +107,9 @@ func main() {
 
 		// Start an infinite loop (no end condition).
 		for i := 0; ; i++ {
+
+			// Create a little message to send to clients,
+			// including the current time.
 			message := fmt.Sprintf("%d - the time is %v", i, time.Now())
 
 			// For each attached client, push the new message
