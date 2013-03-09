@@ -10,7 +10,7 @@ and sends events to the client when they are available. In this example,
 the server pushes a new event every five seconds, consting of a short
 message with the current time.  Any number of clients can be
 connected: they will all receive the same events if they're connected
-concurrently.  (This is achived using a Go's channels and a fan-out
+concurrently.  (This is achived using Go's channels and a fan-out
 pattern.  In other languages you may need to use some kind of pubsub
 messaging, like Redis or Zeromq.)
 
