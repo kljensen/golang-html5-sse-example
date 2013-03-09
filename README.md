@@ -18,6 +18,35 @@ To run the server, do
 	go run ./server.go
 
 Then point your web browser to `http://localhost:8000`.
+You should see output in the browser like the following:
+
+	Yo Duder, here are some facinating messages about the current time:
+	Message: 20 - the time is 2013-03-08 21:08:01.260967 -0500 EST
+	Message: 21 - the time is 2013-03-08 21:08:06.262034 -0500 EST
+	Message: 22 - the time is 2013-03-08 21:08:11.262608 -0500 EST
+	Message: 23 - the time is 2013-03-08 21:08:16.263491 -0500 EST
+	Message: 24 - the time is 2013-03-08 21:08:21.264218 -0500 EST
+	Message: 25 - the time is 2013-03-08 21:08:26.264433 -0500 EST
+
+And, you should see output in the terminal like the following
+
+	2013/03/08 21:20:04 Sent message 0 to 0 attached clients
+	2013/03/08 21:20:04 New client attached.
+	2013/03/08 21:20:04 New client attached.
+	2013/03/08 21:20:09 Sent message 1 to 2 attached clients
+	2013/03/08 21:20:14 Sent message 2 to 2 attached clients
+	2013/03/08 21:20:19 Sent message 3 to 2 attached clients
+	^X2013/03/08 21:20:24 Sent message 4 to 2 attached clients
+	2013/03/08 21:20:29 Sent message 5 to 2 attached clients
+	2013/03/08 21:20:34 Sent message 6 to 2 attached clients
+	2013/03/08 21:20:39 Sent message 7 to 2 attached clients
+	2013/03/08 21:20:44 Sent message 8 to 2 attached clients
+	2013/03/08 21:20:49 Sent message 9 to 2 attached clients
+	2013/03/08 21:20:54 Sent message 10 to 2 attached clients
+	2013/03/08 21:20:54 Client disconnected.
+	2013/03/08 21:20:54 Client disconnected.
+	2013/03/08 21:20:57 New client attached.
+	2013/03/08 21:20:57 New client attached.
 
 ## Thanks
 
