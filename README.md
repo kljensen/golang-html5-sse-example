@@ -36,7 +36,7 @@ And, you should see output in the terminal like the following
 	2013/03/08 21:20:09 Sent message 1 to 2 attached clients
 	2013/03/08 21:20:14 Sent message 2 to 2 attached clients
 	2013/03/08 21:20:19 Sent message 3 to 2 attached clients
-	^X2013/03/08 21:20:24 Sent message 4 to 2 attached clients
+	2013/03/08 21:20:24 Sent message 4 to 2 attached clients
 	2013/03/08 21:20:29 Sent message 5 to 2 attached clients
 	2013/03/08 21:20:34 Sent message 6 to 2 attached clients
 	2013/03/08 21:20:39 Sent message 7 to 2 attached clients
