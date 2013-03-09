@@ -27,7 +27,7 @@ var attachedClients map[chan string]bool = make(map[chan string]bool)
 //
 func EventHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Make sure that the writer support flushing.
+	// Make sure that the writer supports flushing.
 	//
 	f, ok := w.(http.Flusher)
 	if !ok {
@@ -50,7 +50,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	// Don't close the connection, instead loop 100 times,
+	// Don't close the connection, instead loop 10 times,
 	// sending messages and flushing the response each time
 	// there is a new message to send along.
 	// NOTE: we could loop endlessly; however, then you 
