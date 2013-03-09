@@ -83,15 +83,15 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 //
 func MainPageHandler(c http.ResponseWriter, req *http.Request) {
 
-	// Read out HTML into it
+	// Read in the template with our SSE JavaScript code.
 	t, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		log.Fatal("WTF dude, error parsing your template.")
 
 	}
 
-	// Render the template, writing to `c`
-	t.Execute(c, nil)
+	// Render the template, writing to `c`.
+	t.Execute(c, "Duder")
 
 	// Log that we're done, just for kicks.
 	log.Println("Done with MainPageHandler.")
