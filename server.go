@@ -55,7 +55,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// there is a new message to send along.
 	// NOTE: we could loop endlessly; however, then you 
 	// could not easily detect clients that dettach and the
-	// server would continue to send them messages log after
+	// server would continue to send them messages long after
 	// they're gone due to the "keep-alive" header.  One of
 	// the nifty aspects of SSE is that clients automatically
 	// reconnect when they lose their connection.
