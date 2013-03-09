@@ -3,7 +3,11 @@ Golang HTML5 SSE Example
 
 This is an minimalistic example of how to do
 [HTML5 Server Side Events](http://en.wikipedia.org/wiki/Server-sent_events)
-with [Go (golang)](http://golang.org/).
+with [Go (golang)](http://golang.org/).  In this example, the server
+pushes a new "event" every five seconds.  That event is just a short 
+message including the current time.  Any number of clients can be
+connected: they will all receive the same events if they're connected
+concurrently.
 
 ## Installing
 
