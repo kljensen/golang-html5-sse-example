@@ -6,11 +6,13 @@ This is an minimalistic example of how to do
 with [Go (golang)](http://golang.org/).  From the server's perspective,
 SSE is nearly identical to long polling.  The client makes a GET request
 that establishes a TCP connection.  The server keeps this connection open
-send sends events to the client when they are available. In this example,
-the server pushes a new "event" every five seconds.  That event is just a short
-message including the current time.  Any number of clients can be
+and sends events to the client when they are available. In this example,
+the server pushes a new event every five seconds, consting of a short
+message with the current time.  Any number of clients can be
 connected: they will all receive the same events if they're connected
-concurrently.
+concurrently.  (This is achived using a Go's channels and a fan-out
+pattern.  In other languages you may need to use some kind of pubsub
+messaging, like Redis or Zeromq.)
 
 The main advantage of HTML5 SSE over long polling is that there is a nice
 API for it in modern browsers, so that you need not use iframes and such.
