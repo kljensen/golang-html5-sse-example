@@ -101,12 +101,11 @@ func MainPageHandler(c http.ResponseWriter, req *http.Request) {
 //
 func main() {
 
-	// Start our goroutine that will send the current time
-	// into the messageChan, which is a global variable.
+	// Start our goroutine that will send the current
+	// time to attached clients.
 	go func() {
 
-		// Start an infinite loop (no end condition) that
-		// sends messages into the messageChan.
+		// Start an infinite loop (no end condition).
 		for i := 0; ; i++ {
 			message := fmt.Sprintf("%d - the time is %v", i, time.Now())
 
@@ -124,11 +123,11 @@ func main() {
 	}()
 
 	// When we get a request at "/", call `MainPageHandler`
-	// in a goroutine.
+	// in a new goroutine.
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
 
 	// When we get a request at "/event/", call `EventHandler`
-	// in a goroutine.
+	// in a new goroutine.
 	http.Handle("/events/", http.HandlerFunc(EventHandler))
 
 	// Start the server and listen forever on port 8000.
