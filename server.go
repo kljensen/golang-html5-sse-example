@@ -129,7 +129,7 @@ func main() {
 	// in a new goroutine.
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
 
-	// When we get a request at "/event/", call `EventHandler`
+	// When we get a request at "/events/", call `EventHandler`
 	// in a new goroutine.
 	http.Handle("/events/", http.HandlerFunc(EventHandler))
 
