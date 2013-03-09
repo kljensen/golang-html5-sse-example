@@ -53,6 +53,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// Don't close the connection, instead loop 10 times,
 	// sending messages and flushing the response each time
 	// there is a new message to send along.
+	//
 	// NOTE: we could loop endlessly; however, then you 
 	// could not easily detect clients that dettach and the
 	// server would continue to send them messages long after
