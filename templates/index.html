@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
+	<title>HTML5 Server Side Event Example in Go</title>
 </head>
 <body>
-  <script>
-    var source = new EventSource('/events/');
-    source.onmessage = function(e) {
-      document.body.innerHTML += e.data + '<br>';
-    };
-  </script>
-Yo Duder, here are some facinating messages about the current time:<br>
+
+	Yo Duder, here are some facinating messages about the
+	current time:<br>
+
+	<script type="text/javascript">
+
+	    // Create a new HTML5 EventSource
+	    var source = new EventSource('/events/');
+
+	    // Create a callback for when a new message is received.
+	    source.onmessage = function(e) {
+
+	        // Append the `data` attribute of the message to the DOM.
+	        document.body.innerHTML += e.data + '<br>';
+	    };
+	</script>
 </body>
 </html>
