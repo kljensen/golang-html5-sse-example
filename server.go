@@ -61,6 +61,11 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	// the nifty aspects of SSE is that clients automatically
 	// reconnect when they lose their connection.
 	//
+	// A better way to do this is to use the CloseNotifier
+	// interface that will appear in future releases of 
+	// Go (this is written as of 1.0.3):
+	// https://code.google.com/p/go/source/detail?name=3292433291b2
+	//
 	for i := 0; i < 10; i++ {
 
 		// Read from our messageChan.
