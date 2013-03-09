@@ -23,9 +23,6 @@ import (
 //
 var attachedClients map[chan string]bool = make(map[chan string]bool)
 
-// Create a global mapping of all clients
-//
-
 // Handler for events.
 //
 func EventHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +31,7 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	f, ok := w.(http.Flusher)
 	if !ok {
-		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
 		return
 	}
 
