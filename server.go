@@ -42,44 +42,49 @@ type Broker struct {
 	messages chan string
 }
 
-// This Broker method should be run in a goroutine.  It handles
+// This Broker method starts a new goroutine.  It handles
 // the addition & removal of clients, as well as the broadcasting
 // of messages out to clients that are currently attached.
 //
-func (b *Broker) ProcessEvents() {
+func (b *Broker) Start() {
 
-	// Loop endlessly
+	// Start a goroutine
 	//
-	for {
+	go func() {
 
-		// Block until we receive from one of the
-		// three following channels.
-		select {
+		// Loop endlessly
+		//
+		for {
 
-		case s := <-b.newClients:
+			// Block until we receive from one of the
+			// three following channels.
+			select {
 
-			// There is a new client attached and we
-			// want to start sending them messages.
-			b.clients[s] = true
-			log.Println("Added new client")
+			case s := <-b.newClients:
 
-		case s := <-b.defunctClients:
+				// There is a new client attached and we
+				// want to start sending them messages.
+				b.clients[s] = true
+				log.Println("Added new client")
 
-			// A client has dettached and we want to
-			// stop sending them messages.
-			delete(b.clients, s)
-			log.Println("Removed client")
+			case s := <-b.defunctClients:
 
-		case msg := <-b.messages:
+				// A client has dettached and we want to
+				// stop sending them messages.
+				delete(b.clients, s)
+				log.Println("Removed client")
 
-			// There is a new message to send.  For each
-			// attached client, push the new message
-			// into the client's message channel.
-			for s, _ := range b.clients {
-				s <- msg
+			case msg := <-b.messages:
+
+				// There is a new message to send.  For each
+				// attached client, push the new message
+				// into the client's message channel.
+				for s, _ := range b.clients {
+					s <- msg
+				}
 			}
 		}
-	}
+	}()
 }
 
 // This Broker method handles and HTTP request at the "/events/" URL.
@@ -185,7 +190,7 @@ func main() {
 	}
 
 	// Process those events
-	go b.ProcessEvents()
+	b.Start()
 
 	// Make b the HTTP handler for "/events/".  It can do 
 	// this because it has a ServeHTTP method.  That method
