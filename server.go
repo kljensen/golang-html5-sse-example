@@ -82,6 +82,7 @@ func (b *Broker) Start() {
 				for s, _ := range b.clients {
 					s <- msg
 				}
+				log.Printf("Broadcast message to %d clients", len(b.clients))
 			}
 		}
 	}()
@@ -210,7 +211,7 @@ func main() {
 			b.messages <- fmt.Sprintf("%d - the time is %v", i, time.Now())
 
 			// Print a nice log message and sleep for 5s.
-			log.Printf("Sent message %d to %d attached clients", i, len(b.clients))
+			log.Printf("Sent message %d ", i)
 			time.Sleep(5 * 1e9)
 
 		}
