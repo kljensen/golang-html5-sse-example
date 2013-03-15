@@ -189,7 +189,7 @@ func main() {
 		make(chan string),
 	}
 
-	// Process those events
+	// Start processing events
 	b.Start()
 
 	// Make b the HTTP handler for "/events/".  It can do 
