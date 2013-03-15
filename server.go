@@ -160,6 +160,7 @@ func MainPageHandler(w http.ResponseWriter, r *http.Request) {
 	// prefix of the request URL?  It's true.  Here we 
 	// insist the path is just "/".
 	if r.URL.Path != "/" {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
