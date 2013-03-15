@@ -16,16 +16,75 @@ import (
 	"time"
 )
 
-// Create a map `attachedClients`, which is a global variable.
-// The keys of the map are the channels over which we can 
-// push messages to attached clients.  (The values are just
-// booleans and are meaningless.)
+// A single Broker will be created in this program. It is responsible
+// for keeping a list of which clients (browsers) are currently attached
+// and broadcasting events (messages) to those clients.
 //
-var attachedClients map[chan string]bool = make(map[chan string]bool)
+type Broker struct {
 
-// Handler for events.
+	// Create a map of clients, the keys of the map are the channels
+	// over which we can push messages to attached clients.  (The values
+	// are just booleans and are meaningless.)
+	//
+	clients map[chan string]bool
+
+	// Channel into which new clients can be pushed
+	//
+	newClients chan chan string
+
+	// Channel into which disconnected clients should be pushed
+	//
+	defunctClients chan chan string
+
+	// Channel into which messages are pushed to be broadcast out
+	// to attahed clients.
+	//
+	messages chan string
+}
+
+// This Broker method should be run in a goroutine.  It handles
+// the addition & removal of clients, as well as the broadcasting
+// of messages out to clients that are currently attached.
 //
-func EventHandler(w http.ResponseWriter, r *http.Request) {
+func (b *Broker) ProcessEvents() {
+
+	// Loop endlessly
+	//
+	for {
+
+		// Block until we receive from one of the
+		// three following channels.
+		select {
+
+		case s := <-b.newClients:
+
+			// There is a new client attached and we
+			// want to start sending them messages.
+			b.clients[s] = true
+			log.Println("Added new client")
+
+		case s := <-b.defunctClients:
+
+			// A client has dettached and we want to
+			// stop sending them messages.
+			delete(b.clients, s)
+			log.Println("Removed client")
+
+		case msg := <-b.messages:
+
+			// There is a new message to send.  For each
+			// attached client, push the new message
+			// into the client's message channel.
+			for s, _ := range b.clients {
+				s <- msg
+			}
+		}
+	}
+}
+
+// This Broker method handles and HTTP request at the "/events/" URL.
+//
+func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Make sure that the writer supports flushing.
 	//
@@ -35,15 +94,19 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create a new channel, over which the broker can
+	// send this client messages.
+	messageChan := make(chan string)
+
 	// Add this client to the map of those that should
 	// receive updates
-	messageChan := make(chan string)
-	attachedClients[messageChan] = true
-	log.Println("New client attached.")
+	b.newClients <- messageChan
 
 	// Remove this client from the map of attached clients
 	// when `EventHandler` exits.
-	defer delete(attachedClients, messageChan)
+	defer func() {
+		b.defunctClients <- messageChan
+	}()
 
 	// Set the headers related to event streaming.
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -79,14 +142,21 @@ func EventHandler(w http.ResponseWriter, r *http.Request) {
 		f.Flush()
 	}
 
-	// Log disconnect.
-	log.Println("Client disconnected.")
+	// Done.
+	log.Println("Finished HTTP request at ", r.URL.Path)
 }
 
 // Handler for the main page, which we wire up to the 
 // route at "/" below in `main`.
 //
-func MainPageHandler(c http.ResponseWriter, req *http.Request) {
+func MainPageHandler(w http.ResponseWriter, r *http.Request) {
+
+	// Did you know Golang's ServeMux matches only the
+	// prefix of the request URL?  It's true.  Here we 
+	// insist the path is just "/".
+	if r.URL.Path != "/" {
+		return
+	}
 
 	// Read in the template with our SSE JavaScript code.
 	t, err := template.ParseFiles("templates/index.html")
@@ -95,36 +165,46 @@ func MainPageHandler(c http.ResponseWriter, req *http.Request) {
 
 	}
 
-	// Render the template, writing to `c`.
-	t.Execute(c, "Duder")
+	// Render the template, writing to `w`.
+	t.Execute(w, "Duder")
 
-	// Log that we're done, just for kicks.
-	log.Println("Done with MainPageHandler.")
+	// Done.
+	log.Println("Finished HTTP request at ", r.URL.Path)
 }
 
 // Main routine
 //
 func main() {
 
-	// Start our goroutine that will send the current
-	// time to attached clients.
-	go func() {
+	// Make a new Broker instance
+	b := &Broker{
+		make(map[chan string]bool),
+		make(chan (chan string)),
+		make(chan (chan string)),
+		make(chan string),
+	}
 
-		// Start an infinite loop (no end condition).
+	// Process those events
+	go b.ProcessEvents()
+
+	// Make b the HTTP handler for "/events/".  It can do 
+	// this because it has a ServeHTTP method.  That method
+	// is called in a separate goroutine for each 
+	// request to "/events/".
+	http.Handle("/events/", b)
+
+	// Generate a constant stream of events that get pushed
+	// into the Broker's messages channel and are then broadcast
+	// out to any clients that are attached.
+	go func() {
 		for i := 0; ; i++ {
 
 			// Create a little message to send to clients,
 			// including the current time.
-			message := fmt.Sprintf("%d - the time is %v", i, time.Now())
-
-			// For each attached client, push the new message
-			// into the client's message channel.
-			for messageChan, _ := range attachedClients {
-				messageChan <- message
-			}
+			b.messages <- fmt.Sprintf("%d - the time is %v", i, time.Now())
 
 			// Print a nice log message and sleep for 5s.
-			log.Printf("Sent message %d to %d attached clients", i, len(attachedClients))
+			log.Printf("Sent message %d to %d attached clients", i, len(b.clients))
 			time.Sleep(5 * 1e9)
 
 		}
@@ -133,10 +213,6 @@ func main() {
 	// When we get a request at "/", call `MainPageHandler`
 	// in a new goroutine.
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
-
-	// When we get a request at "/events/", call `EventHandler`
-	// in a new goroutine.
-	http.Handle("/events/", http.HandlerFunc(EventHandler))
 
 	// Start the server and listen forever on port 8000.
 	http.ListenAndServe(":8000", nil)
