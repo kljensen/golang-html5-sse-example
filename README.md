@@ -71,7 +71,7 @@ This code is based off of a few sources, mostly
 * the [HTML5Rocks SSE tutorial](http://www.html5rocks.com/en/tutorials/eventsource/basics/).
 
  
-## License
+## License (MIT)
 
 Copyright (c) 2013 Kyle L. Jensen (kljensen@gmail.com)
 
