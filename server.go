@@ -119,46 +119,34 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	// Don't close the connection, instead loop 10 times,
-	// sending messages and flushing the response each time
-	// there is a new message to send along.
-	//
-	// NOTE: we could loop endlessly; however, then you 
-	// could not easily detect clients that dettach and the
-	// server would continue to send them messages long after
-	// they're gone due to the "keep-alive" header.  One of
-	// the nifty aspects of SSE is that clients automatically
-	// reconnect when they lose their connection.
-	//
-	// A better way to do this is to use the CloseNotifier
-	// interface that will appear in future releases of 
-	// Go (this is written as of 1.0.3):
-	// https://code.google.com/p/go/source/detail?name=3292433291b2
-	//
-	for i := 0; i < 10; i++ {
+	// Don't close the connection, instead loop until the
+	// client have closed the conncetion, sending messages
+	// and flushing the response each time there is a new
+	// message to send along.
+	for {
+		select {
+		case <-w.(http.CloseNotifier).CloseNotify():
+			// Done
+			log.Println("Finished HTTP request at ", r.URL.Path)
+			return
+		case msg := <-messageChan:
+			// Write to the ResponseWriter, `w`.
+			fmt.Fprintf(w, "data: Message: %s\n\n", msg)
 
-		// Read from our messageChan.
-		msg := <-messageChan
-
-		// Write to the ResponseWriter, `w`.
-		fmt.Fprintf(w, "data: Message: %s\n\n", msg)
-
-		// Flush the response.  This is only possible if
-		// the repsonse supports streaming.
-		f.Flush()
+			// Flush the response. This is only possible if
+			// the response supports streaming.
+			f.Flush()
+		}
 	}
-
-	// Done.
-	log.Println("Finished HTTP request at ", r.URL.Path)
 }
 
-// Handler for the main page, which we wire up to the 
+// Handler for the main page, which we wire up to the
 // route at "/" below in `main`.
 //
 func MainPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Did you know Golang's ServeMux matches only the
-	// prefix of the request URL?  It's true.  Here we 
+	// prefix of the request URL?  It's true.  Here we
 	// insist the path is just "/".
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
@@ -194,9 +182,9 @@ func main() {
 	// Start processing events
 	b.Start()
 
-	// Make b the HTTP handler for "/events/".  It can do 
+	// Make b the HTTP handler for "/events/".  It can do
 	// this because it has a ServeHTTP method.  That method
-	// is called in a separate goroutine for each 
+	// is called in a separate goroutine for each
 	// request to "/events/".
 	http.Handle("/events/", b)
 
