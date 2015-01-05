@@ -108,10 +108,14 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// receive updates
 	b.newClients <- messageChan
 
-	// Remove this client from the map of attached clients
-	// when `EventHandler` exits.
-	defer func() {
+	// Listen to the closing of the http connection via the CloseNotifier
+	notify := w.(http.CloseNotifier).CloseNotify()
+	go func() {
+		<-notify
+		// Remove this client from the map of attached clients
+		// when `EventHandler` exits.
 		b.defunctClients <- messageChan
+		log.Println("HTTP connection just closed.")
 	}()
 
 	// Set the headers related to event streaming.
@@ -123,7 +127,7 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// sending messages and flushing the response each time
 	// there is a new message to send along.
 	//
-	// NOTE: we could loop endlessly; however, then you 
+	// NOTE: we could loop endlessly; however, then you
 	// could not easily detect clients that dettach and the
 	// server would continue to send them messages long after
 	// they're gone due to the "keep-alive" header.  One of
@@ -131,11 +135,11 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// reconnect when they lose their connection.
 	//
 	// A better way to do this is to use the CloseNotifier
-	// interface that will appear in future releases of 
+	// interface that will appear in future releases of
 	// Go (this is written as of 1.0.3):
 	// https://code.google.com/p/go/source/detail?name=3292433291b2
 	//
-	for i := 0; i < 10; i++ {
+	for {
 
 		// Read from our messageChan.
 		msg := <-messageChan
@@ -152,13 +156,13 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Finished HTTP request at ", r.URL.Path)
 }
 
-// Handler for the main page, which we wire up to the 
+// Handler for the main page, which we wire up to the
 // route at "/" below in `main`.
 //
 func MainPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Did you know Golang's ServeMux matches only the
-	// prefix of the request URL?  It's true.  Here we 
+	// prefix of the request URL?  It's true.  Here we
 	// insist the path is just "/".
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
@@ -194,9 +198,9 @@ func main() {
 	// Start processing events
 	b.Start()
 
-	// Make b the HTTP handler for "/events/".  It can do 
+	// Make b the HTTP handler for "/events/".  It can do
 	// this because it has a ServeHTTP method.  That method
-	// is called in a separate goroutine for each 
+	// is called in a separate goroutine for each
 	// request to "/events/".
 	http.Handle("/events/", b)
 
