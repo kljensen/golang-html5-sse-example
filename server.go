@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ory-am/common/env"
 	"html/template"
 	"log"
 	"net/http"
@@ -79,7 +80,7 @@ func (b *Broker) Start() {
 				// There is a new message to send.  For each
 				// attached client, push the new message
 				// into the client's message channel.
-				for s, _ := range b.clients {
+				for s := range b.clients {
 					s <- msg
 				}
 				log.Printf("Broadcast message to %d clients", len(b.clients))
@@ -225,6 +226,10 @@ func main() {
 	// in a new goroutine.
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
 
-	// Start the server and listen forever on port 8000.
-	http.ListenAndServe(":8000", nil)
+	// Start the server and listen forever on port env or 8000.
+	host := env.Getenv("HOST", "")
+	port := env.Getenv("PORT", "8000")
+	listen := fmt.Sprintf("%s:%s", host, port)
+	log.Printf("Listening on %s", listen)
+	http.ListenAndServe(listen, nil)
 }
