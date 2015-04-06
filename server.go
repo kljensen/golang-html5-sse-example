@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ory-am/common/env"
 	"html/template"
 	"log"
 	"net/http"
@@ -225,6 +226,10 @@ func main() {
 	// in a new goroutine.
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
 
-	// Start the server and listen forever on port 8000.
-	http.ListenAndServe(":8000", nil)
+	// Start the server and listen forever on port env or 8000.
+	port := env.Getenv("host", "")
+	host := env.Getenv("port", "8000")
+	listen := fmt.Sprintf("%s:%s", port, host)
+	log.Printf("Listening on %s", listen)
+	http.ListenAndServe(listen, nil)
 }
