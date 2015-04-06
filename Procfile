@@ -1,0 +1,1 @@
+web: golang-html5-sse-example
