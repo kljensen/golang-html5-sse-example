@@ -227,9 +227,9 @@ func main() {
 	http.Handle("/", http.HandlerFunc(MainPageHandler))
 
 	// Start the server and listen forever on port env or 8000.
-	port := env.Getenv("HOST", "")
-	host := env.Getenv("PORT", "8000")
-	listen := fmt.Sprintf("%s:%s", port, host)
+	host := env.Getenv("HOST", "")
+	port := env.Getenv("PORT", "8000")
+	listen := fmt.Sprintf("%s:%s", host, port)
 	log.Printf("Listening on %s", listen)
 	http.ListenAndServe(listen, nil)
 }
