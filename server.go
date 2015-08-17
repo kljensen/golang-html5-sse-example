@@ -72,6 +72,8 @@ func (b *Broker) Start() {
 				// A client has dettached and we want to
 				// stop sending them messages.
 				delete(b.clients, s)
+				close(s)
+
 				log.Println("Removed client")
 
 			case msg := <-b.messages:
@@ -142,7 +144,13 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for {
 
 		// Read from our messageChan.
-		msg := <-messageChan
+		msg, open := <-messageChan
+
+		if !open {
+			// If our messageChan was closed, this means that the client has
+			// disconnected.
+			break
+		}
 
 		// Write to the ResponseWriter, `w`.
 		fmt.Fprintf(w, "data: Message: %s\n\n", msg)
