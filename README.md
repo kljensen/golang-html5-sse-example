@@ -2,7 +2,7 @@ Golang HTML5 SSE Example
 ========================
 
 This is an minimalistic example of how to do
-[HTML5 Server Side Events](http://en.wikipedia.org/wiki/Server-sent_events)
+[HTML5 Server Sent Events](http://en.wikipedia.org/wiki/Server-sent_events)
 with [Go (golang)](http://golang.org/).  From the server's perspective,
 SSE is nearly identical to long polling.  The client makes a GET request
 that establishes a TCP connection.  The server keeps this connection open
