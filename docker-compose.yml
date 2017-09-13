@@ -1,0 +1,14 @@
+version: '3'
+services:
+  go-sse:
+    container_name: go-sse
+    build:
+      context: .
+    ports:
+      - 8000:8000
+  rproxy:
+    container_name: rproxy
+    build:
+      context: ./nginx
+    ports:
+      - 80:80
