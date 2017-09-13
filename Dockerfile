@@ -5,6 +5,8 @@ WORKDIR /app
 RUN apk add --no-cache git \
   && git clone https://github.com/amenezes/golang-html5-sse-example .
 
+VOLUME /app
+
 EXPOSE 8080
 
 CMD ["run", "./server.go"]
