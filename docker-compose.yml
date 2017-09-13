@@ -6,6 +6,8 @@ services:
       context: .
     ports:
       - 8000:8000
+    volumes:
+      - $PWD/.:/app
   rproxy:
     container_name: rproxy
     build:
