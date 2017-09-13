@@ -8,3 +8,4 @@ RUN apk add --no-cache git \
 EXPOSE 8080
 
 CMD ["run", "./server.go"]
+ENTRYPOINT ["/usr/local/go/bin/go"]
