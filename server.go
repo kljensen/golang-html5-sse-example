@@ -81,7 +81,7 @@ func (b *Broker) Start() {
 				// There is a new message to send.  For each
 				// attached client, push the new message
 				// into the client's message channel.
-				for s, _ := range b.clients {
+				for s := range b.clients {
 					s <- msg
 				}
 				log.Printf("Broadcast message to %d clients", len(b.clients))
