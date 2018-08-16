@@ -152,7 +152,7 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // Handler for the main page, which we wire up to the
 // route at "/" below in `main`.
 //
-func MainPageHandler(w http.ResponseWriter, r *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request) {
 
 	// Did you know Golang's ServeMux matches only the
 	// prefix of the request URL?  It's true.  Here we
@@ -214,9 +214,9 @@ func main() {
 		}
 	}()
 
-	// When we get a request at "/", call `MainPageHandler`
+	// When we get a request at "/", call `handler`
 	// in a new goroutine.
-	http.Handle("/", http.HandlerFunc(MainPageHandler))
+	http.Handle("/", http.HandlerFunc(handler))
 
 	// Start the server and listen forever on port 8000.
 	http.ListenAndServe(":8000", nil)
