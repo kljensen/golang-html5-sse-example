@@ -170,7 +170,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render the template, writing to `w`.
-	t.Execute(w, "Duder")
+	t.Execute(w, "friend")
 
 	// Done.
 	log.Println("Finished HTTP request at ", r.URL.Path)
