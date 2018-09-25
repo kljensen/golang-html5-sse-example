@@ -7,7 +7,7 @@ with [Go (golang)](http://golang.org/).  From the server's perspective,
 SSE is nearly identical to long polling.  The client makes a GET request
 that establishes a TCP connection.  The server keeps this connection open
 and sends events to the client when they are available. In this example,
-the server pushes a new event every five seconds, consting of a short
+the server pushes a new event every five seconds, consisting of a short
 message with the current time.  Any number of clients can be
 connected: they will all receive the same events if they're connected
 concurrently.  (This is achived using Go's channels and a fan-out
