@@ -174,7 +174,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, "friend")
 
 	// Done.
-	log.Println("Finished HTTP request at ", r.URL.Path)
+	log.Println("Finished HTTP request at", r.URL.Path)
 }
 
 // Main routine
@@ -210,7 +210,7 @@ func main() {
 
 			// Print a nice log message and sleep for 5s.
 			log.Printf("Sent message %d ", i)
-			time.Sleep(5 * 1e9)
+			time.Sleep(5e9)
 
 		}
 	}()
