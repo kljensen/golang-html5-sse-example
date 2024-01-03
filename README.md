@@ -36,7 +36,7 @@ To run the server, do
 Then point your web browser to `http://localhost:8000`.
 You should see output in the browser like the following:
 
-	Yo Duder, here are some facinating messages about the current time:
+	Yo friend, here are some fascinating messages about the current time:
 	Message: 20 - the time is 2013-03-08 21:08:01.260967 -0500 EST
 	Message: 21 - the time is 2013-03-08 21:08:06.262034 -0500 EST
 	Message: 22 - the time is 2013-03-08 21:08:11.262608 -0500 EST
