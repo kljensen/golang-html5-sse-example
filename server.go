@@ -110,8 +110,8 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// receive updates
 	b.newClients <- messageChan
 
-	// Listen to the closing of the http connection via the CloseNotifier
-	notify := w.(http.CloseNotifier).CloseNotify()
+	// Listen to the closing of the http connection via the Request.Context
+	notify := r.Context().Done()
 	go func() {
 		<-notify
 		// Remove this client from the map of attached clients
