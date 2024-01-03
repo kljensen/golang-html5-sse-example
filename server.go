@@ -19,7 +19,6 @@ import (
 // A single Broker will be created in this program. It is responsible
 // for keeping a list of which clients (browsers) are currently attached
 // and broadcasting events (messages) to those clients.
-//
 type Broker struct {
 
 	// Create a map of clients, the keys of the map are the channels
@@ -45,7 +44,6 @@ type Broker struct {
 // This Broker method starts a new goroutine.  It handles
 // the addition & removal of clients, as well as the broadcasting
 // of messages out to clients that are currently attached.
-//
 func (b *Broker) Start() {
 
 	// Start a goroutine
@@ -91,7 +89,6 @@ func (b *Broker) Start() {
 }
 
 // This Broker method handles and HTTP request at the "/events/" URL.
-//
 func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Make sure that the writer supports flushing.
@@ -152,7 +149,6 @@ func (b *Broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Handler for the main page, which we wire up to the
 // route at "/" below in `main`.
-//
 func handler(w http.ResponseWriter, r *http.Request) {
 
 	// Did you know Golang's ServeMux matches only the
@@ -177,7 +173,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Main routine
-//
 func main() {
 
 	// Make a new Broker instance
